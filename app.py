@@ -81,7 +81,9 @@ def get_available_checkpoints():
     """Discover trained models."""
     checkpoints = {}
     if os.path.exists("models/best_mobilenetv2.pt"):
-        checkpoints["MobileNetV2 (Transfer Learning)"] = ("mobilenetv2", "models/best_mobilenetv2.pt")
+        checkpoints["MobileNetV2 (Transfer Learning - Recommended)"] = ("mobilenetv2", "models/best_mobilenetv2.pt")
+    if os.path.exists("models/best_efficientnet.pt"):
+        checkpoints["EfficientNet-B0 (Transfer Learning)"] = ("efficientnet", "models/best_efficientnet.pt")
     if os.path.exists("models/best_baseline.pt"):
         checkpoints["Custom CNN (Baseline)"] = ("baseline", "models/best_baseline.pt")
     return checkpoints
@@ -296,8 +298,9 @@ def main():
         st.write("Examine training curves, confusion matrices, comparative benchmark metrics, and error analysis.")
 
         # Show metrics if available
-        col_m1, col_m2 = st.columns(2)
+        col_m1, col_m2, col_m3 = st.columns(3)
         base_json = "results/metrics_baseline.json"
+        eff_json = "results/metrics_efficientnet.json"
         mob_json = "results/metrics_mobilenetv2.json"
 
         with col_m1:
@@ -308,17 +311,27 @@ def main():
                 st.metric("Test Accuracy", f"{d['accuracy']*100:.2f}%")
                 st.metric("Macro F1-Score", f"{d['macro_f1']*100:.2f}%")
             else:
-                st.info("Baseline metrics will display once baseline evaluation completes.")
+                st.info("Baseline metrics pending.")
 
         with col_m2:
-            st.markdown("##### MobileNetV2 (Transfer Learning)")
+            st.markdown("##### EfficientNet-B0")
+            if os.path.exists(eff_json):
+                with open(eff_json) as f:
+                    d = json.load(f)
+                st.metric("Test Accuracy", f"{d['accuracy']*100:.2f}%")
+                st.metric("Macro F1-Score", f"{d['macro_f1']*100:.2f}%")
+            else:
+                st.info("EfficientNet metrics pending.")
+
+        with col_m3:
+            st.markdown("##### MobileNetV2 (Top Performer)")
             if os.path.exists(mob_json):
                 with open(mob_json) as f:
                     d = json.load(f)
                 st.metric("Test Accuracy", f"{d['accuracy']*100:.2f}%")
                 st.metric("Macro F1-Score", f"{d['macro_f1']*100:.2f}%")
             else:
-                st.info("MobileNetV2 metrics will display once evaluation completes.")
+                st.info("MobileNetV2 metrics pending.")
 
         # Visual Artifacts
         st.markdown("---")

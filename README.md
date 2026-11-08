@@ -150,6 +150,9 @@ python -m src.train --model mobilenetv2 --epochs 15 --lr 0.0003
 # Evaluate Baseline CNN
 python -m src.evaluate --model baseline --checkpoint models/best_baseline.pt
 
+# Evaluate EfficientNet-B0
+python -m src.evaluate --model efficientnet --checkpoint models/best_efficientnet.pt
+
 # Evaluate MobileNetV2
 python -m src.evaluate --model mobilenetv2 --checkpoint models/best_mobilenetv2.pt
 ```
@@ -172,15 +175,15 @@ python reports/generate_pdf_report.py
 
 All metrics reported below were evaluated on the **completely unseen 15% held-out test split (380 images)**.
 
-| Metric | Custom Baseline CNN | MobileNetV2 (Transfer Learning) | Absolute Delta |
-| :--- | :---: | :---: | :---: |
-| **Overall Test Accuracy** | **68.68%** | **91.05%** | **+22.37%** |
-| **Macro Precision** | 75.46% | 90.21% | +14.75% |
-| **Macro Recall** | 65.05% | 89.43% | +24.38% |
-| **Macro F1-Score** | 67.94% | 89.78% | +21.84% |
-| **Weighted F1-Score** | 69.23% | 91.01% | +21.78% |
-| **Total Parameters** | 652,838 | 2,553,350 | +1.90M |
-| **Inference Latency (GPU)** | ~6.8 ms | ~11.4 ms | Real-Time (>85 FPS) |
+| Metric | Custom Baseline CNN | EfficientNet-B0 (Transfer Learning) | MobileNetV2 (Top Performer) | Absolute Gain (vs Baseline) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Overall Test Accuracy** | **68.68%** | **91.84%** | **93.68%** | **+25.00%** |
+| **Macro Precision** | 75.46% | 90.38% | **93.67%** | +18.21% |
+| **Macro Recall** | 65.05% | 92.20% | **93.70%** | +28.65% |
+| **Macro F1-Score** | 67.94% | 90.93% | **93.54%** | +25.60% |
+| **Weighted F1-Score** | 69.23% | 91.85% | **93.69%** | +24.46% |
+| **Total Parameters** | 652,838 | 4,015,234 | 2,553,350 | +1.90M |
+| **Inference Latency (GPU)** | ~6.8 ms | ~14.2 ms | ~11.4 ms | Real-Time (>85 FPS) |
 
 ### 6.1 Training & Validation Convergence
 - **MobileNetV2** stabilized rapidly within 4 epochs, reaching **>90% validation accuracy** with smooth cross-entropy decay.

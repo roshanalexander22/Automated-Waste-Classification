@@ -345,53 +345,57 @@ def generate_gradcam_gallery(
 
 
 def generate_comparison_plot(
-    metrics_baseline_path: str,
-    metrics_mobilenet_path: str,
+    metrics_baseline_path: str = "results/metrics_baseline.json",
+    metrics_mobilenet_path: str = "results/metrics_mobilenetv2.json",
+    metrics_efficientnet_path: str = "results/metrics_efficientnet.json",
     save_path: str = "results/model_comparison_metrics.png",
 ):
-    """Plot comparison bar charts between Baseline CNN and Transfer Learning."""
+    """Plot comparison bar charts among Custom CNN Baseline, EfficientNet-B0, and MobileNetV2."""
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
-    if not (os.path.exists(metrics_baseline_path) and os.path.exists(metrics_mobilenet_path)):
-        print("[WARN] Both metric files must exist to generate comparison plot.")
-        return
+    
+    models_data = []
+    if os.path.exists(metrics_baseline_path):
+        with open(metrics_baseline_path) as f:
+            models_data.append(("Custom CNN Baseline", json.load(f), "#7f8c8d"))
+    if os.path.exists(metrics_efficientnet_path):
+        with open(metrics_efficientnet_path) as f:
+            models_data.append(("EfficientNet-B0", json.load(f), "#2980b9"))
+    if os.path.exists(metrics_mobilenet_path):
+        with open(metrics_mobilenet_path) as f:
+            models_data.append(("MobileNetV2 (Best)", json.load(f), "#27ae60"))
 
-    with open(metrics_baseline_path) as f:
-        m_base = json.load(f)
-    with open(metrics_mobilenet_path) as f:
-        m_trans = json.load(f)
+    if len(models_data) < 2:
+        print("[WARN] Need at least 2 metric files to generate comparison plot.")
+        return
 
     metric_keys = ["accuracy", "macro_precision", "macro_recall", "macro_f1", "weighted_f1"]
     labels = ["Accuracy", "Macro Prec", "Macro Recall", "Macro F1", "Weighted F1"]
-    base_vals = [m_base[k] * 100 for k in metric_keys]
-    trans_vals = [m_trans[k] * 100 for k in metric_keys]
 
     x = np.arange(len(labels))
-    width = 0.35
+    n_models = len(models_data)
+    width = 0.8 / n_models
 
-    fig, ax = plt.subplots(figsize=(10, 5), dpi=300)
-    bars1 = ax.bar(x - width / 2, base_vals, width, label="Custom CNN Baseline", color="#7f8c8d", edgecolor="black")
-    bars2 = ax.bar(x + width / 2, trans_vals, width, label="MobileNetV2 (Transfer Learning)", color="#27ae60", edgecolor="black")
+    fig, ax = plt.subplots(figsize=(11, 5.5), dpi=300)
+    for i, (name, metrics, color) in enumerate(models_data):
+        offset = (i - (n_models - 1) / 2) * width
+        vals = [metrics[k] * 100 for k in metric_keys]
+        bars = ax.bar(x + offset, vals, width, label=name, color=color, edgecolor="black", linewidth=0.8)
+        for bar in bars:
+            yval = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width() / 2.0, yval + 1.2, f"{yval:.1f}%", ha="center", va="bottom", fontsize=7.5, fontweight="bold")
 
-    ax.set_ylabel("Score (%)", fontsize=11, fontweight="bold")
-    ax.set_title("Performance Comparison: Custom CNN Baseline vs. MobileNetV2", fontsize=13, fontweight="bold", pad=12)
+    ax.set_ylabel("Evaluation Score (%)", fontsize=11, fontweight="bold")
+    ax.set_title("Benchmarking Architectural Paradigms on 15% Held-Out Test Set", fontsize=13, fontweight="bold", pad=14)
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=10, fontweight="bold")
-    ax.set_ylim(0, 105)
+    ax.set_ylim(0, 108)
     ax.grid(axis="y", linestyle="--", alpha=0.5)
-    ax.legend(frameon=True, fontsize=10)
-
-    for bar in bars1:
-        yval = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width() / 2.0, yval + 1.2, f"{yval:.1f}%", ha="center", va="bottom", fontsize=9)
-
-    for bar in bars2:
-        yval = bar.get_height()
-        ax.text(bar.get_x() + bar.get_width() / 2.0, yval + 1.2, f"{yval:.1f}%", ha="center", va="bottom", fontsize=9, fontweight="bold")
+    ax.legend(frameon=True, fontsize=10, loc="lower right")
 
     plt.tight_layout()
     plt.savefig(save_path, bbox_inches="tight")
     plt.close()
-    print(f"[INFO] Model comparison plot saved to {save_path}")
+    print(f"[INFO] 3-way model comparison plot saved to {save_path}")
 
 
 def main():

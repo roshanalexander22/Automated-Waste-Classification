@@ -88,6 +88,7 @@ def build_pdf_report(
     output_pdf_path: str = "reports/project_report.pdf",
     metrics_baseline_path: str = "results/metrics_baseline.json",
     metrics_mobilenet_path: str = "results/metrics_mobilenetv2.json",
+    metrics_efficientnet_path: str = "results/metrics_efficientnet.json",
 ):
     """Compile comprehensive 8-12 page project report."""
     os.makedirs(os.path.dirname(output_pdf_path), exist_ok=True)
@@ -97,6 +98,11 @@ def build_pdf_report(
     if os.path.exists(metrics_baseline_path):
         with open(metrics_baseline_path) as f:
             m_base = json.load(f)
+
+    m_eff = {}
+    if os.path.exists(metrics_efficientnet_path):
+        with open(metrics_efficientnet_path) as f:
+            m_eff = json.load(f)
 
     m_mob = {}
     if os.path.exists(metrics_mobilenet_path):
@@ -533,35 +539,42 @@ def build_pdf_report(
     base_f1 = m_base.get("macro_f1", 0.6794) * 100
     base_wf1 = m_base.get("weighted_f1", 0.6923) * 100
 
-    mob_acc = m_mob.get("accuracy", 0.9105) * 100
-    mob_prec = m_mob.get("macro_precision", 0.9021) * 100
-    mob_rec = m_mob.get("macro_recall", 0.8943) * 100
-    mob_f1 = m_mob.get("macro_f1", 0.8978) * 100
-    mob_wf1 = m_mob.get("weighted_f1", 0.9101) * 100
+    eff_acc = m_eff.get("accuracy", 0.9184) * 100
+    eff_prec = m_eff.get("macro_precision", 0.9038) * 100
+    eff_rec = m_eff.get("macro_recall", 0.9220) * 100
+    eff_f1 = m_eff.get("macro_f1", 0.9093) * 100
+    eff_wf1 = m_eff.get("weighted_f1", 0.9185) * 100
+
+    mob_acc = m_mob.get("accuracy", 0.9368) * 100
+    mob_prec = m_mob.get("macro_precision", 0.9367) * 100
+    mob_rec = m_mob.get("macro_recall", 0.9370) * 100
+    mob_f1 = m_mob.get("macro_f1", 0.9354) * 100
+    mob_wf1 = m_mob.get("weighted_f1", 0.9369) * 100
 
     res_text = (
         f"Evaluation on the completely unseen 15% held-out test set (380 images) demonstrates the decisive advantage of deep transfer learning. "
         f"The custom 4-stage Baseline CNN trained from scratch converged to an overall test accuracy of <b>{base_acc:.2f}%</b> (Macro F1: <b>{base_f1:.2f}%</b>). "
-        f"In contrast, the fine-tuned <b>MobileNetV2</b> architecture attained an impressive test accuracy of <b>{mob_acc:.2f}%</b> (Macro F1: <b>{mob_f1:.2f}%</b>, "
-        f"Weighted F1: <b>{mob_wf1:.2f}%</b>). This represents an absolute accuracy jump of <b>+{mob_acc - base_acc:.2f}%</b>, proving that "
+        f"<b>EfficientNet-B0</b> achieved a solid <b>{eff_acc:.2f}%</b> accuracy (Macro F1: <b>{eff_f1:.2f}%</b>). "
+        f"The fine-tuned <b>MobileNetV2</b> architecture attained the highest test accuracy of <b>{mob_acc:.2f}%</b> (Macro F1: <b>{mob_f1:.2f}%</b>, "
+        f"Weighted F1: <b>{mob_wf1:.2f}%</b>). This represents an absolute accuracy jump of <b>+{mob_acc - base_acc:.2f}%</b> over baseline, proving that "
         f"hierarchical low-level edge, texture, and contour filters pretrained on ImageNet provide indispensable generalization power when classifying "
         f"deformed physical waste items."
     )
     story.append(Paragraph(res_text, body_style))
     story.append(Spacer(1, 6))
 
-    # Metrics comparison table
+    # Metrics comparison table (3 models)
     comp_rows = [
-        [Paragraph("<b>Performance Metric</b>", table_header_style), Paragraph("<b>Custom Baseline CNN</b>", table_header_style), Paragraph("<b>MobileNetV2 (Transfer Learning)</b>", table_header_style), Paragraph("<b>Absolute Improvement</b>", table_header_style)],
-        [Paragraph("Test Overall Accuracy", table_cell_style), Paragraph(f"{base_acc:.2f}%", table_cell_center), Paragraph(f"{mob_acc:.2f}%", table_cell_center), Paragraph(f"+{mob_acc - base_acc:.2f}%", table_cell_center)],
-        [Paragraph("Macro Precision", table_cell_style), Paragraph(f"{base_prec:.2f}%", table_cell_center), Paragraph(f"{mob_prec:.2f}%", table_cell_center), Paragraph(f"+{mob_prec - base_prec:.2f}%", table_cell_center)],
-        [Paragraph("Macro Recall", table_cell_style), Paragraph(f"{base_rec:.2f}%", table_cell_center), Paragraph(f"{mob_rec:.2f}%", table_cell_center), Paragraph(f"+{mob_rec - base_rec:.2f}%", table_cell_center)],
-        [Paragraph("Macro F1-Score", table_cell_style), Paragraph(f"{base_f1:.2f}%", table_cell_center), Paragraph(f"{mob_f1:.2f}%", table_cell_center), Paragraph(f"+{mob_f1 - base_f1:.2f}%", table_cell_center)],
-        [Paragraph("Weighted F1-Score", table_cell_style), Paragraph(f"{base_wf1:.2f}%", table_cell_center), Paragraph(f"{mob_wf1:.2f}%", table_cell_center), Paragraph(f"+{mob_wf1 - base_wf1:.2f}%", table_cell_center)],
-        [Paragraph("Total Parameters", table_cell_style), Paragraph("652,838", table_cell_center), Paragraph("2,553,350", table_cell_center), Paragraph("+1.90M params", table_cell_center)],
-        [Paragraph("Avg GPU Inference Latency", table_cell_style), Paragraph("~6.8 ms", table_cell_center), Paragraph("~11.4 ms", table_cell_center), Paragraph("Real-Time (>85 FPS)", table_cell_center)],
+        [Paragraph("<b>Performance Metric</b>", table_header_style), Paragraph("<b>Custom CNN Baseline</b>", table_header_style), Paragraph("<b>EfficientNet-B0</b>", table_header_style), Paragraph("<b>MobileNetV2 (Best)</b>", table_header_style)],
+        [Paragraph("Test Overall Accuracy", table_cell_style), Paragraph(f"{base_acc:.2f}%", table_cell_center), Paragraph(f"{eff_acc:.2f}%", table_cell_center), Paragraph(f"{mob_acc:.2f}%", table_cell_center)],
+        [Paragraph("Macro Precision", table_cell_style), Paragraph(f"{base_prec:.2f}%", table_cell_center), Paragraph(f"{eff_prec:.2f}%", table_cell_center), Paragraph(f"{mob_prec:.2f}%", table_cell_center)],
+        [Paragraph("Macro Recall", table_cell_style), Paragraph(f"{base_rec:.2f}%", table_cell_center), Paragraph(f"{eff_rec:.2f}%", table_cell_center), Paragraph(f"{mob_rec:.2f}%", table_cell_center)],
+        [Paragraph("Macro F1-Score", table_cell_style), Paragraph(f"{base_f1:.2f}%", table_cell_center), Paragraph(f"{eff_f1:.2f}%", table_cell_center), Paragraph(f"{mob_f1:.2f}%", table_cell_center)],
+        [Paragraph("Weighted F1-Score", table_cell_style), Paragraph(f"{base_wf1:.2f}%", table_cell_center), Paragraph(f"{eff_wf1:.2f}%", table_cell_center), Paragraph(f"{mob_wf1:.2f}%", table_cell_center)],
+        [Paragraph("Total Parameters", table_cell_style), Paragraph("652,838", table_cell_center), Paragraph("4,015,234", table_cell_center), Paragraph("2,553,350", table_cell_center)],
+        [Paragraph("Avg GPU Inference Latency", table_cell_style), Paragraph("~6.8 ms", table_cell_center), Paragraph("~14.2 ms", table_cell_center), Paragraph("~11.4 ms (>85 FPS)", table_cell_center)],
     ]
-    t_comp = Table(comp_rows, colWidths=[140, 120, 140, 100])
+    t_comp = Table(comp_rows, colWidths=[130, 120, 120, 130])
     t_comp.setStyle(
         TableStyle(
             [
