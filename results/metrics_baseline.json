@@ -1,0 +1,47 @@
+{
+  "model_name": "baseline",
+  "test_samples": 380,
+  "accuracy": 0.6868421052631579,
+  "macro_precision": 0.7546114811072884,
+  "macro_recall": 0.6505495781620744,
+  "macro_f1": 0.6793634675612572,
+  "weighted_f1": 0.6923022053442884,
+  "per_class": {
+    "cardboard": {
+      "precision": 0.9387755102040817,
+      "recall": 0.7666666666666667,
+      "f1_score": 0.8440366972477065,
+      "support": 60.0
+    },
+    "glass": {
+      "precision": 0.4596774193548387,
+      "recall": 0.75,
+      "f1_score": 0.57,
+      "support": 76.0
+    },
+    "metal": {
+      "precision": 0.7111111111111111,
+      "recall": 0.5161290322580645,
+      "f1_score": 0.5981308411214953,
+      "support": 62.0
+    },
+    "paper": {
+      "precision": 0.8131868131868132,
+      "recall": 0.8314606741573034,
+      "f1_score": 0.8222222222222222,
+      "support": 89.0
+    },
+    "plastic": {
+      "precision": 0.7049180327868853,
+      "recall": 0.589041095890411,
+      "f1_score": 0.6417910447761194,
+      "support": 73.0
+    },
+    "trash": {
+      "precision": 0.9,
+      "recall": 0.45,
+      "f1_score": 0.6,
+      "support": 20.0
+    }
+  }
+}

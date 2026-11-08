@@ -1,0 +1,47 @@
+{
+  "model_name": "mobilenetv2",
+  "test_samples": 380,
+  "accuracy": 0.9368421052631579,
+  "macro_precision": 0.9366831002462912,
+  "macro_recall": 0.9369694252106026,
+  "macro_f1": 0.935376326306553,
+  "weighted_f1": 0.9369405456170592,
+  "per_class": {
+    "cardboard": {
+      "precision": 0.9814814814814815,
+      "recall": 0.8833333333333333,
+      "f1_score": 0.9298245614035088,
+      "support": 60.0
+    },
+    "glass": {
+      "precision": 0.9594594594594594,
+      "recall": 0.9342105263157895,
+      "f1_score": 0.9466666666666667,
+      "support": 76.0
+    },
+    "metal": {
+      "precision": 0.8840579710144928,
+      "recall": 0.9838709677419355,
+      "f1_score": 0.9312977099236641,
+      "support": 62.0
+    },
+    "paper": {
+      "precision": 0.9052631578947369,
+      "recall": 0.9662921348314607,
+      "f1_score": 0.9347826086956522,
+      "support": 89.0
+    },
+    "plastic": {
+      "precision": 0.9850746268656716,
+      "recall": 0.9041095890410958,
+      "f1_score": 0.9428571428571428,
+      "support": 73.0
+    },
+    "trash": {
+      "precision": 0.9047619047619048,
+      "recall": 0.95,
+      "f1_score": 0.926829268292683,
+      "support": 20.0
+    }
+  }
+}
