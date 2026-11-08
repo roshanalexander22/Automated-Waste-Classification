@@ -107,3 +107,4 @@ plt.tight_layout()
 plt.savefig("results/system_architecture.png", bbox_inches="tight")
 plt.close()
 print("[INFO] System architecture diagram saved to results/system_architecture.png")
+

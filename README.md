@@ -285,3 +285,4 @@ Automated-Waste-Classification/
 **Roshan Alexander**  
 Deep Learning & Computer Vision Track | November 2026  
 GitHub: [@roshanalexander22](https://github.com/roshanalexander22)
+

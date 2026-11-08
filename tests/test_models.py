@@ -47,3 +47,4 @@ def test_cam_target_layers():
     m2 = build_model("mobilenetv2", pretrained=False)
     t2 = m2.get_cam_target_layer()
     assert isinstance(t2, nn.Module)
+

@@ -45,3 +45,4 @@ def test_gradcam_overlay():
 
     assert overlay.size == (100, 100)
     assert isinstance(overlay, Image.Image)
+

@@ -287,3 +287,4 @@ if __name__ == "__main__":
     d_dir = find_dataset_dir()
     df = create_or_load_splits(d_dir)
     plot_class_distribution(df)
+

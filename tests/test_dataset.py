@@ -44,3 +44,4 @@ def test_transforms_shapes():
     assert tensor_eval.shape == (3, 224, 224)
     assert isinstance(tensor_train, torch.Tensor)
     assert isinstance(tensor_eval, torch.Tensor)
+

@@ -192,3 +192,4 @@ if __name__ == "__main__":
     print("Baseline output shape:", b_model(dummy).shape)
     print("MobileNetV2 output shape:", m_model(dummy).shape)
     print("EfficientNet output shape:", e_model(dummy).shape)
+
